@@ -1,0 +1,33 @@
+name: Run EditMode and PlayMode Test 2
+on:
+  workflow_dispatch: {}
+jobs:
+  test:
+    permissions: write-all
+    name: Run EditMode and PlayMode Test
+    runs-on: ubuntu-latest
+    steps:
+      # プロジェクトのチェックアウト
+      - name: Check out my unity project.
+        uses: actions/checkout@v4
+
+      # テストの実行
+      - name: Run EditMode and PlayMode Test
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: auto
+          containerRegistryImageVersion: 3
+
+      # アーティファクトの保存
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test results
+          path: artifacts
